@@ -1,0 +1,7 @@
+ExitOnError 1
+r
+h
+loadfile "C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\Debug\frdmk64f_lwip_mqtt_freertos.hex"
+qc
+
+qc
