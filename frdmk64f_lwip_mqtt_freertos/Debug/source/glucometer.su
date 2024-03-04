@@ -1,0 +1,5 @@
+../source/glucometer.c:38:6:measurement_timer_cb	24	static
+../source/glucometer.c:47:6:set_glucometer_state	16	static
+../source/glucometer.c:53:6:set_glucometer_period	16	static
+../source/glucometer.c:58:6:mqtt_init	16	static
+../source/glucometer.c:78:6:glucometer_task	32	static

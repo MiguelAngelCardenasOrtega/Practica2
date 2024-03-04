@@ -37,6 +37,8 @@
 #include "fsl_phyksz8081.h"
 #include "fsl_enet_mdio.h"
 #include "fsl_device_registers.h"
+#include "glucometer.h"
+#include "lwip_mqtt_freertos.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -47,7 +49,7 @@
 #ifndef configMAC_ADDR
 #define configMAC_ADDR                     \
     {                                      \
-        0x02, 0x12, 0x13, 0x10, 0x15, 0xAA \
+        0x02, 0x12, 0x13, 0x10, 0x15, 0xAB \
     }
 #endif
 
@@ -90,6 +92,9 @@
 /*! @brief Priority of the temporary lwIP initialization thread. */
 #define INIT_THREAD_PRIO DEFAULT_THREAD_PRIO
 
+/*! @brief Priority of the Glucometer thread. */
+#define GLUCOMETER_THREAD_PRIO 2
+
 /*! @brief Stack size of the temporary initialization thread. */
 #define APP_THREAD_STACKSIZE 1024
 
@@ -99,8 +104,6 @@
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
-
-static void connect_to_mqtt(void *ctx);
 
 /*******************************************************************************
  * Variables
@@ -114,6 +117,7 @@ static mqtt_client_t *mqtt_client;
 
 /*! @brief MQTT client ID string. */
 static char client_id[40];
+static char current_topic[50];
 
 /*! @brief MQTT client information. */
 static const struct mqtt_connect_client_info_t mqtt_client_info = {
@@ -134,11 +138,16 @@ static const struct mqtt_connect_client_info_t mqtt_client_info = {
 static ip_addr_t mqtt_addr;
 
 /*! @brief Indicates connection to MQTT broker. */
-static volatile bool connected = false;
+static volatile mqtt_connection_status_t mqtt_status = MQTT_CONNECT_DISCONNECTED;
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
+
+mqtt_connection_status_t get_mqtt_status()
+{
+	return mqtt_status;
+}
 
 /*!
  * @brief Called when subscription request finishes.
@@ -164,7 +173,11 @@ static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len
 {
     LWIP_UNUSED_ARG(arg);
 
-    PRINTF("Received %u bytes from the topic \"%s\": \"", tot_len, topic);
+    PRINTF("Received %u bytes from the topic \"%s\"\r\n", tot_len, topic);
+
+    memset(current_topic, 0, sizeof(current_topic));
+
+    strcpy(current_topic, topic);
 }
 
 /*!
@@ -176,21 +189,31 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
 
     LWIP_UNUSED_ARG(arg);
 
-    for (i = 0; i < len; i++)
+    if (strcmp(current_topic, START_STOP_TOPIC) == 0)
     {
-        if (isprint(data[i]))
-        {
-            PRINTF("%c", (char)data[i]);
-        }
-        else
-        {
-            PRINTF("\\x%02x", data[i]);
-        }
+    	if (strncmp(data, START, len) == 0)
+    	{
+    		set_glucometer_state(GLUCOMETER_ON);
+    	}
+    	else if (strncmp(data, STOP, len) == 0)
+    	{
+    		set_glucometer_state(GLUCOMETER_OFF);
+    	}
     }
 
-    if (flags & MQTT_DATA_FLAG_LAST)
+    if (strcmp(current_topic, CONFIG_TOPIC) == 0)
     {
-        PRINTF("\"\r\n");
+    	uint32_t period = (uint32_t) atoi(data);
+
+    	if (period != 0)
+    	{
+    		set_glucometer_period(period);
+    		set_glucometer_state(GLUCOMETER_CHANGE_CONFIG);
+    	}
+    	else
+    	{
+    		PRINTF("RECEIVED INVALID CONFIG PERIOD!\r\n");
+    	}
     }
 }
 
@@ -199,8 +222,8 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
  */
 static void mqtt_subscribe_topics(mqtt_client_t *client)
 {
-    static const char *topics[] = {"miguel/lwip_topic/#", "lwip_other/#"};
-    int qos[]                   = {0, 1};
+    static const char *topics[] = {START_STOP_TOPIC, CONFIG_TOPIC};
+    int qos[]                   = {1, 1};
     err_t err;
     int i;
 
@@ -229,7 +252,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
 {
     const struct mqtt_connect_client_info_t *client_info = (const struct mqtt_connect_client_info_t *)arg;
 
-    connected = (status == MQTT_CONNECT_ACCEPTED);
+    mqtt_status = status;
 
     switch (status)
     {
@@ -271,7 +294,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
 /*!
  * @brief Starts connecting to MQTT broker. To be called on tcpip_thread.
  */
-static void connect_to_mqtt(void *ctx)
+void connect_to_mqtt(void *ctx)
 {
     LWIP_UNUSED_ARG(ctx);
 
@@ -290,7 +313,7 @@ static void mqtt_message_published_cb(void *arg, err_t err)
 
     if (err == ERR_OK)
     {
-        PRINTF("Published to the topic \"%s\".\r\n", topic);
+        //PRINTF("Published to the topic \"%s\".\r\n", topic);
     }
     else
     {
@@ -301,16 +324,31 @@ static void mqtt_message_published_cb(void *arg, err_t err)
 /*!
  * @brief Publishes a message. To be called on tcpip_thread.
  */
-static void publish_message(void *ctx)
+void publish_message(void *ctx)
 {
-    static const char *topic   = "miguel/lwip_topic/100";
-    static const char *message = "message from board";
+    static uint8_t data_value = 0;
+    static uint8_t max_value = 100;
 
-    LWIP_UNUSED_ARG(ctx);
+	uint8_t message[5] = {0};
 
-    PRINTF("Going to publish to the topic \"%s\"...\r\n", topic);
+	LWIP_UNUSED_ARG(ctx);
 
-    mqtt_publish(mqtt_client, topic, message, strlen(message), 1, 0, mqtt_message_published_cb, (void *)topic);
+    PRINTF("Publishing Health data...\r\n");
+
+    sprintf(message, "%d", data_value);
+    mqtt_publish(mqtt_client, OXIGEN_TOPIC, message, strlen(message), 1, 0, mqtt_message_published_cb, (void *)OXIGEN_TOPIC);
+
+    sprintf(message, "%d", max_value - data_value);
+    mqtt_publish(mqtt_client, HEART_RATE_TOPIC, message, strlen(message), 1, 0, mqtt_message_published_cb, (void *)HEART_RATE_TOPIC);
+
+    sprintf(message, "%d", abs((2*data_value) - max_value));
+    mqtt_publish(mqtt_client, GLUCOSE_TOPIC, message, strlen(message), 1, 0, mqtt_message_published_cb, (void *)GLUCOSE_TOPIC);
+
+    sprintf(message, "%d", abs((2*data_value) - max_value));
+    mqtt_publish(mqtt_client, BATTERY_TOPIC, message, strlen(message), 1, 0, mqtt_message_published_cb, (void *)BATTERY_TOPIC);
+
+    data_value++;
+    data_value %= 100;
 }
 
 /*!
@@ -363,35 +401,16 @@ static void app_thread(void *arg)
         err = netconn_gethostbyname(EXAMPLE_MQTT_SERVER_HOST, &mqtt_addr);
     }
 
-    if (err == ERR_OK)
-    {
-        /* Start connecting to MQTT broker from tcpip_thread */
-        err = tcpip_callback(connect_to_mqtt, NULL);
-        if (err != ERR_OK)
-        {
-            PRINTF("Failed to invoke broker connection on the tcpip_thread: %d.\r\n", err);
-        }
-    }
-    else
+    if (err != ERR_OK)
     {
         PRINTF("Failed to obtain IP address: %d.\r\n", err);
     }
 
-    /* Publish some messages */
-    for (i = 0; i < 5;)
-    {
-        if (connected)
-        {
-            err = tcpip_callback(publish_message, NULL);
-            if (err != ERR_OK)
-            {
-                PRINTF("Failed to invoke publishing of a message on the tcpip_thread: %d.\r\n", err);
-            }
-            i++;
-        }
-
-        sys_msleep(1000U);
-    }
+    /* Create the Glucometer task */
+	if (sys_thread_new("Glucometer", glucometer_task, NULL, INIT_THREAD_STACKSIZE, GLUCOMETER_THREAD_PRIO) == NULL)
+	{
+		LWIP_ASSERT("Glucometer(): Task creation failed.", 0);
+	}
 
     vTaskDelete(NULL);
 }

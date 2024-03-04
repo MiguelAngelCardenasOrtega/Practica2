@@ -1,5 +1,4 @@
-source/lwip_mqtt_freertos.o source/lwip_mqtt_freertos.d: \
- ../source/lwip_mqtt_freertos.c \
+source/glucometer.o source/glucometer.d: ../source/glucometer.c \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/opt.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\source/lwipopts.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/arch.h \
@@ -35,14 +34,6 @@ source/lwip_mqtt_freertos.o source/lwip_mqtt_freertos.d: \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\freertos\freertos_kernel\include/semphr.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\freertos\freertos_kernel\include/queue.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/debug.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/pin_mux.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/clock_config.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/board.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/clock_config.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\drivers/fsl_gpio.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\drivers/fsl_port.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\phy/fsl_phy.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\mdio/fsl_mdio.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/api.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/netbuf.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/pbuf.h \
@@ -88,13 +79,11 @@ source/lwip_mqtt_freertos.o source/lwip_mqtt_freertos.d: \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/prot/dhcp.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/netif/ethernet.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\port/enet_ethernetif.h \
- ../source/lwip_mqtt_id.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\phy/fsl_phyksz8081.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\phy/fsl_phy.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\mdio/fsl_enet_mdio.h \
- C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\drivers/fsl_enet.h \
  C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\mdio/fsl_mdio.h \
- ../source/glucometer.h ../source/lwip_mqtt_freertos.h
+ ../source/lwip_mqtt_id.h ../source/glucometer.h \
+ ../source/lwip_mqtt_freertos.h \
+ C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\freertos\freertos_kernel\include/timers.h
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/opt.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\source/lwipopts.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/arch.h:
@@ -130,14 +119,6 @@ C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\freertos\freertos_kernel\include/semphr.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\freertos\freertos_kernel\include/queue.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/debug.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/pin_mux.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/clock_config.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/board.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\board/clock_config.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\drivers/fsl_gpio.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\drivers/fsl_port.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\phy/fsl_phy.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\mdio/fsl_mdio.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/api.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/netbuf.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/pbuf.h:
@@ -183,11 +164,9 @@ C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/lwip/prot/dhcp.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\src\include/netif/ethernet.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\lwip\port/enet_ethernetif.h:
-../source/lwip_mqtt_id.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\phy/fsl_phyksz8081.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\phy/fsl_phy.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\mdio/fsl_enet_mdio.h:
-C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\drivers/fsl_enet.h:
 C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\mdio/fsl_mdio.h:
+../source/lwip_mqtt_id.h:
 ../source/glucometer.h:
 ../source/lwip_mqtt_freertos.h:
+C:\Users\mcardenas\Documents\MCUXpressoIDE_11.6.1_8255\Iteso\frdmk64f_lwip_mqtt_freertos\freertos\freertos_kernel\include/timers.h:
